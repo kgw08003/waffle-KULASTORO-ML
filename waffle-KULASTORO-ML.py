@@ -244,8 +244,19 @@ def predict_sentiment(model, tokenizer, sentence):
     indexed = [init_token_idx] + tokenizer.convert_tokens_to_ids(tokens) + [eos_token_idx]
     tensor = torch.LongTensor(indexed).to(device)
     tensor = tensor.unsqueeze(0)
-    prediction = torch.sigmoid(model(tensor))
-    return prediction.item()
+
+    # 모델에 입력하여 감정을 예측합니다.
+    with torch.no_grad():
+        prediction = torch.sigmoid(model(tensor))
+
+    # 감정 예측을 0~0.4, 0.4~0.6, 0.6~1 사이의 범위로 분류합니다.
+    sentiment_score = prediction.item()
+    if sentiment_score <= 0.4:
+        return "부정적"
+    elif 0.4 < sentiment_score <= 0.6:
+        return "중립적"
+    else:
+        return "긍정적"
 
 text = input("감정 분석을 수행할 텍스트를 입력하세요: ")
 
