@@ -212,7 +212,7 @@ tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased',
                                           attention_mask=True)
 
 # transformer 모델 훈련
-N_EPOCHS = 5
+N_EPOCHS = 1
 best_valid_loss = float('inf')
 
 for epoch in range(N_EPOCHS):
@@ -232,3 +232,22 @@ for epoch in range(N_EPOCHS):
     print(f'Epoch: {epoch+1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
     print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc*100:.2f}%')
     print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc*100:.2f}%')
+
+model.load_state_dict(torch.load('tut6-model.pt'))
+test_loss, test_acc = evaluate(model, test_iterator, criterion)
+print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc*100:.2f}%')
+
+def predict_sentiment(model, tokenizer, sentence):
+    model.eval()
+    tokens = tokenizer.tokenize(sentence)
+    tokens = tokens[:max_input_length-2]
+    indexed = [init_token_idx] + tokenizer.convert_tokens_to_ids(tokens) + [eos_token_idx]
+    tensor = torch.LongTensor(indexed).to(device)
+    tensor = tensor.unsqueeze(0)
+    prediction = torch.sigmoid(model(tensor))
+    return prediction.item()
+
+text = input("감정 분석을 수행할 텍스트를 입력하세요: ")
+
+# 감정 예측 및 출력
+print("입력한 텍스트의 감정은:", predict_sentiment(model, tokenizer, text))
