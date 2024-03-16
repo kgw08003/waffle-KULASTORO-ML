@@ -251,9 +251,9 @@ def predict_sentiment(model, tokenizer, sentence):
 
     # 감정 예측을 0~0.4, 0.4~0.6, 0.6~1 사이의 범위로 분류합니다.
     sentiment_score = prediction.item()
-    if sentiment_score <= 0.4:
+    if sentiment_score <= 0.45:
         return "부정적"
-    elif 0.4 < sentiment_score <= 0.6:
+    elif 0.45 < sentiment_score <= 0.55:
         return "중립적"
     else:
         return "긍정적"
