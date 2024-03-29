@@ -4,13 +4,19 @@ import torch
 import random
 import pandas as pd
 import numpy as np
+import requests
+import urllib.request
+
+
+# 데이터 불러오기
+urllib.request.urlretrieve("https://raw.githubusercontent.com/e9t/nsmc/master/ratings_train.txt", filename="ratings_train.txt")
+urllib.request.urlretrieve("https://raw.githubusercontent.com/e9t/nsmc/master/ratings_test.txt", filename="ratings_test.txt")
+train_file = "ratings_train.txt"
+test_file = "ratings_test.txt"
+train_data = pd.read_csv(train_file, sep='\t', names=columns, skiprows=1).dropna() # null데이터 삭제
+test_data = pd.read_csv(test_file, sep='\t', names=columns, skiprows=1).dropna()
 
 columns = ['id','text','label']
-train_data = pd.read_csv('data/ratings_train.txt', sep='\t', names=columns, skiprows=1).dropna()
-test_data = pd.read_csv('data/ratings_test.txt', sep='\t', names=columns, skiprows=1).dropna()
-
-train_data.to_csv('train_data.csv',index=False)
-test_data.to_csv('test_data.csv',index=False)
 
 # 랜덤 시드 고정
 SEED = 1234
