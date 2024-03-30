@@ -7,16 +7,15 @@ import numpy as np
 import requests
 import urllib.request
 
-
 # 데이터 불러오기
 urllib.request.urlretrieve("https://raw.githubusercontent.com/e9t/nsmc/master/ratings_train.txt", filename="ratings_train.txt")
 urllib.request.urlretrieve("https://raw.githubusercontent.com/e9t/nsmc/master/ratings_test.txt", filename="ratings_test.txt")
 train_file = "ratings_train.txt"
 test_file = "ratings_test.txt"
+columns = ['id','text','label']
+
 train_data = pd.read_csv(train_file, sep='\t', names=columns, skiprows=1).dropna() # null데이터 삭제
 test_data = pd.read_csv(test_file, sep='\t', names=columns, skiprows=1).dropna()
-
-columns = ['id','text','label']
 
 # 랜덤 시드 고정
 SEED = 1234
@@ -268,3 +267,28 @@ text = input("감정 분석을 수행할 텍스트를 입력하세요: ")
 
 # 감정 예측 및 출력
 print("입력한 텍스트의 감정은:", predict_sentiment(model, tokenizer, text))
+
+import torch
+import torch.nn as nn
+from transformers import BertModel
+
+class BERTGRUSentiment(nn.Module):
+    def __init__(self, bert, hidden_dim, output_dim, n_layers, bidirectional, dropout):
+        super().__init__()
+
+        self.bert = bert
+        embedding_dim = bert.config.to_dict()['hidden_size']
+        self.rnn = nn.GRU(embedding_dim, hidden_dim, num_layers=n_layers, bidirectional=bidirectional, batch_first=True, dropout=0 if n_layers < 2 else dropout)
+        self.out = nn.Linear(hidden_dim * 2 if bidirectional else hidden_dim, output_dim)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, text):
+        with torch.no_grad():
+            embedded = self.bert(text)[0]
+        _, hidden = self.rnn(embedded)
+        if self.rnn.bidirectional:
+            hidden = self.dropout(torch.cat((hidden[-2,:,:], hidden[-1,:,:]), dim=1))
+        else:
+            hidden = self.dropout(hidden[-1,:,:])
+        output = self.out(hidden)
+        return output
