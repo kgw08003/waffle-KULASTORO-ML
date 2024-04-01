@@ -268,27 +268,13 @@ text = input("감정 분석을 수행할 텍스트를 입력하세요: ")
 # 감정 예측 및 출력
 print("입력한 텍스트의 감정은:", predict_sentiment(model, tokenizer, text))
 
-import torch
-import torch.nn as nn
-from transformers import BertModel
+# 라이브러리 import
+import requests
+import pprint
+import json
 
-class BERTGRUSentiment(nn.Module):
-    def __init__(self, bert, hidden_dim, output_dim, n_layers, bidirectional, dropout):
-        super().__init__()
+# url 입력
+url = 'http://34.22.69.63/5000'
 
-        self.bert = bert
-        embedding_dim = bert.config.to_dict()['hidden_size']
-        self.rnn = nn.GRU(embedding_dim, hidden_dim, num_layers=n_layers, bidirectional=bidirectional, batch_first=True, dropout=0 if n_layers < 2 else dropout)
-        self.out = nn.Linear(hidden_dim * 2 if bidirectional else hidden_dim, output_dim)
-        self.dropout = nn.Dropout(dropout)
-
-    def forward(self, text):
-        with torch.no_grad():
-            embedded = self.bert(text)[0]
-        _, hidden = self.rnn(embedded)
-        if self.rnn.bidirectional:
-            hidden = self.dropout(torch.cat((hidden[-2,:,:], hidden[-1,:,:]), dim=1))
-        else:
-            hidden = self.dropout(hidden[-1,:,:])
-        output = self.out(hidden)
-        return output
+# url 불러오기
+response = requests.get(url)
