@@ -1,6 +1,4 @@
 from flask import Flask, request, jsonify
-# from model import BERTGRUSentiment
-# from model import predict_sentiment
 
 app = Flask(__name__)
 @app.route('/')
@@ -9,9 +7,7 @@ def index():
     return "hello"
 
 @app.route('/predict', methods=['GET'])
-def predict_sentiment():
-    # 클라이언트로부터 텍스트를 받아옴
-    
+def predict_sentiment():    
     import os
     import torch
     import random
@@ -65,23 +61,17 @@ def predict_sentiment():
             self.dropout = nn.Dropout(dropout)
 
         def forward(self, text):
-            #text = [batch_size, sent_len]
             with torch.no_grad():
                 embedded = self.bert(text)[0]
-            #embedded = [batch_size, sent_len, emb_dim]
 
             _, hidden = self.rnn(embedded)
-            #hideen = [n_layers * n_directions, batch_size, emb_dim]
 
             if self.rnn.bidirectional:
-                # 마지막 레이어의 양방향 히든 벡터만 가져옴
                 hidden = self.dropout(torch.cat((hidden[-2,:,:], hidden[-1,:,:]), dim=1))
             else:
                 hidden = self.dropout(hidden[-1,:,:])
-            #hidden = [batch_size, hid_dim]
 
             output = self.out(hidden)
-            #output = [batch_size, out_dim]
 
             return output
         
@@ -113,22 +103,17 @@ def predict_sentiment():
         else:
             return "긍정적"
 
-    text = "집가고싶다 "
+    text = "오늘하루가 너무 힘들었다 "
 
     # 감정 예측 및 출력
     print("입력한 텍스트의 감정은:", predict_sentiment(model, tokenizer, text))
 
     text1 = predict_sentiment(model, tokenizer, text)
     
-    # 예측된 감정을 JSON 형식으로 반환
-    # return jsonify({'sentiment': sentiment})
     return text1
-
-# def predict_sentiment_from_text(text):
-    # 모델을 초기화하고 텍스트를 입력으로 전달하여 감정을 예측
-    # model = BERTGRUSentiment(bert, hidden_dim, output_dim, n_layers, bidirectional, dropout)  # 모델 초기화
-    # sentiment = model.predict(text)  # 텍스트로부터 감정 예측
-    # return sentiment
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
+
+# 오늘하루가 너무 힘들었다 -> 부정적
+# 오늘 행복한 하루였다 -> 긍정적
