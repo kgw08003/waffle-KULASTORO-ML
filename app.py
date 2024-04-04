@@ -1,3 +1,14 @@
+import os
+import torch
+import random
+import pandas as pd
+import numpy as np
+import requests
+import urllib.request
+import torch.nn as nn
+from transformers import BertModel
+from transformers import BertTokenizer
+    
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
@@ -7,17 +18,6 @@ def index():
 
 @app.route('/predict', methods=['GET'])
 def predict_sentiment():    
-    import os
-    import torch
-    import random
-    import pandas as pd
-    import numpy as np
-    import requests
-    import urllib.request
-    import torch.nn as nn
-    from transformers import BertModel
-    from transformers import BertTokenizer
-
     bert = BertModel.from_pretrained('bert-base-multilingual-cased')
 
     hidden_dim = 256
