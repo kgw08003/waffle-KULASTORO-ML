@@ -18,7 +18,7 @@ def index():
     print("hello")
     return "hello"
 
-@app.route('/predict', methods=['GET'])
+@app.route('/sentence', methods=['GET'])
 def predict_sentiment():    
 
     bert = BertModel.from_pretrained('bert-base-multilingual-cased')
