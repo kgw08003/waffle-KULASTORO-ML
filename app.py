@@ -3,8 +3,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 @app.route('/')
 def index():
-    print("hello")
-    return "hello"
+    print("")
 
 @app.route('/predict', methods=['GET'])
 def predict_sentiment():    
@@ -103,7 +102,7 @@ def predict_sentiment():
         else:
             return "긍정적"
 
-    text = "오늘하루가 너무 힘들었다 "
+    text = "내일은 힘들 예정이야 "
 
     # 감정 예측 및 출력
     print("입력한 텍스트의 감정은:", predict_sentiment(model, tokenizer, text))

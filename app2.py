@@ -15,8 +15,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 @app.route('/')
 def index():
-    print("hello")
-    return "hello"
+    print("")
 
 @app.route('/sentence', methods=['GET'])
 def predict_sentiment():    
