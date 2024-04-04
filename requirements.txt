@@ -3,3 +3,6 @@ torchtext==0.6.0
 transformers==4.37.2
 pandas
 numpy
+requests
+urllib.request
+flask
