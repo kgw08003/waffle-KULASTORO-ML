@@ -44,5 +44,11 @@
   - Transformer 기반 모델의 구조와 정서 분석 응용에 대한 깊은 이해.
   - 머신 러닝을 실제 문제에 적용하는 실습 경험.
   - 데이터 전처리부터 애플리케이션 배포까지의 프로젝트 전반에 대한 경험.
+ 
+![image](https://github.com/user-attachments/assets/4b4813b9-d9bd-4989-a36e-032c8df1683c)
 
+
+
+------------------ 
+수료증
 ![GDSC 수료증](https://github.com/user-attachments/assets/d6c08e66-57cf-4951-95c5-87b9c3672474)
